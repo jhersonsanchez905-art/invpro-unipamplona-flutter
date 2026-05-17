@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
-import 'core/di.dart';
 import 'core/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_state.dart';
-import 'blocs/auth/auth_event.dart';
 import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -37,8 +35,6 @@ const String routeUsuarios = '/usuarios';
 const String routeAuditoria = '/auditoria';
 
 GoRouter _createRouter(AuthBloc authBloc) {
-  final authState = authBloc.state;
-
   return GoRouter(
     initialLocation: routeLanding,
     refreshListenable:
