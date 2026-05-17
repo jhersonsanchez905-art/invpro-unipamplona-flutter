@@ -1,0 +1,83 @@
+[
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 200,
+    "fields": {
+      "name": "OK",
+      "description_es": "Solicitud procesada exitosamente",
+      "category": "success"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 201,
+    "fields": {
+      "name": "Created",
+      "description_es": "Recurso creado exitosamente",
+      "category": "success"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 204,
+    "fields": {
+      "name": "No Content",
+      "description_es": "Operación exitosa sin contenido",
+      "category": "success"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 400,
+    "fields": {
+      "name": "Bad Request",
+      "description_es": "Datos enviados no válidos",
+      "category": "client_error"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 401,
+    "fields": {
+      "name": "Unauthorized",
+      "description_es": "Autenticación requerida",
+      "category": "client_error"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 403,
+    "fields": {
+      "name": "Forbidden",
+      "description_es": "Sin permisos para esta acción",
+      "category": "client_error"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 404,
+    "fields": {
+      "name": "Not Found",
+      "description_es": "Recurso no encontrado",
+      "category": "client_error"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 429,
+    "fields": {
+      "name": "Too Many Requests",
+      "description_es": "Demasiadas solicitudes",
+      "category": "client_error"
+    }
+  },
+  {
+    "model": "common.httpstatuscatalog",
+    "pk": 500,
+    "fields": {
+      "name": "Internal Server Error",
+      "description_es": "Error interno del servidor",
+      "category": "server_error"
+    }
+  }
+]

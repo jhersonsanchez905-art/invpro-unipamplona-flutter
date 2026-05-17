@@ -64,3 +64,21 @@ class Producto(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.sku or 'SKU pendiente'})"
+
+
+class StockAlerta(models.Model):
+    """Registro de alerta cuando stock_actual <= stock_minimo."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    producto = models.ForeignKey(
+        Producto, on_delete=models.CASCADE, related_name="alertas"
+    )
+    stock_al_momento = models.DecimalField(max_digits=12, decimal_places=2)
+    stock_minimo_al_momento = models.DecimalField(max_digits=12, decimal_places=2)
+    resuelta = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Alerta de stock"
+        ordering = ["-created_at"]

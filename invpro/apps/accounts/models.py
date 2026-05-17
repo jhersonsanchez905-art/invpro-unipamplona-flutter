@@ -130,3 +130,40 @@ class Session(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class AuditLog(models.Model):
+    """
+    Registro de auditoría para acciones significativas del sistema.
+    """
+
+    ACTION_CHOICES = [
+        ("login", "Login"),
+        ("logout", "Logout"),
+        ("failed_login", "Login fallido"),
+        ("create", "Creación"),
+        ("update", "Actualización"),
+        ("delete", "Eliminación"),
+        ("export", "Exportación"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    action = models.CharField(max_length=30, choices=ACTION_CHOICES)
+    entity = models.CharField(max_length=50, blank=True)
+    entity_id = models.UUIDField(null=True, blank=True)
+    changes = models.JSONField(default=dict, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+    http_status = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Log de auditoría"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["user"]),
+            models.Index(fields=["entity"]),
+        ]
