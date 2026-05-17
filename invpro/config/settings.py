@@ -124,7 +124,38 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "InvPro API",
+    "DESCRIPTION": """
+    API REST del Sistema de Inventario — Universidad de Pamplona.
+
+    ## Autenticación
+    1. POST /api/v1/auth/register/ — crear cuenta
+    2. POST /api/v1/auth/verify-email/ — verificar correo con OTP
+    3. POST /api/v1/auth/login/ — iniciar sesión
+    4. POST /api/v1/auth/verify-otp/ — verificar OTP de login
+    5. Usar el access token en el header: Authorization: Bearer {token}
+
+    ## Roles
+    - superadmin: acceso total
+    - admin: gestión completa excepto eliminar usuarios
+    - almacenista: ver inventario + crear/editar productos + movimientos
+    - auditor: ver inventario + reportes + auditoría
+    - visualizador: solo lectura
+    """,
     "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": "/api/v1/",
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SORT_OPERATIONS": False,
+    "COMPONENTS": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
+    "SECURITY": [{"BearerAuth": []}],
 }
 
 from datetime import timedelta
