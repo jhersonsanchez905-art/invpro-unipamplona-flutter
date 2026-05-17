@@ -1,0 +1,17 @@
+# RENDER_DEPLOY_HOOK_URL must be set in GitHub Secrets
+# Get it from: Render Dashboard → Service → Settings → Deploy Hook
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}

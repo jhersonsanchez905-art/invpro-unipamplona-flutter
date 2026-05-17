@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: test_invpro_db
+          POSTGRES_USER: invpro_user
+          POSTGRES_PASSWORD: invpro_pass
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: cd invpro && pip install -r requirements.txt
+      - name: Run flake8
+        run: |
+          cd invpro && pip install flake8
+          flake8 apps/ config/ --max-line-length=100 --exclude=migrations
+      - name: Run tests
+        env:
+          SECRET_KEY: test-secret-key-for-ci-only
+          DEBUG: 'True'
+          DB_NAME: test_invpro_db
+          DB_USER: invpro_user
+          DB_PASSWORD: invpro_pass
+          DB_HOST: localhost
+          DB_PORT: '5432'
+          REDIS_URL: redis://localhost:6379/0
+          EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+          DEFAULT_FROM_EMAIL: test@test.com
+          ALLOWED_HOSTS: localhost,127.0.0.1
+          CORS_ALLOWED_ORIGINS: http://localhost:3000
+        run: cd invpro && python manage.py test apps.accounts.tests apps.inventory.tests apps.movements.tests --verbosity=2
+
+  flutter-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.0'
+          channel: 'stable'
+      - name: Get dependencies
+        run: cd invpro_app && flutter pub get
+      - name: Analyze
+        run: cd invpro_app && flutter analyze
+      - name: Run tests
+        run: cd invpro_app && flutter test
