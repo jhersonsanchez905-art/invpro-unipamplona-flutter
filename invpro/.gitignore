@@ -1,9 +1,10 @@
+ignore
 venv/
 .env
 __pycache__/
 *.pyc
 *.pyo
-migrations/
+**/migrations/__pycache__/
 staticfiles/
 .DS_Store
 *.egg-info/
