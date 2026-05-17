@@ -8,3 +8,6 @@ __pycache__/
 staticfiles/
 .DS_Store
 *.egg-info/
+
+# Allow Flutter project to be tracked
+!invpro_app/
