@@ -6,6 +6,7 @@ and human-readable error codes mapped from HTTP status codes.
 """
 
 from rest_framework.views import exception_handler
+from rest_framework.response import Response
 
 
 def custom_exception_handler(exc, context):
@@ -36,8 +37,16 @@ def custom_exception_handler(exc, context):
         status_code = response.status_code
         code, message = error_mapping.get(status_code, ("UNEXPECTED_ERROR", "Ha ocurrido un error inesperado."))
     else:
-        status_code = 500
-        code, message = error_mapping[500]
+        return Response(
+            {
+                "success": False,
+                "error": {
+                    "code": "SERVER_ERROR",
+                    "message": "Error interno del servidor. Contacta al administrador."
+                }
+            },
+            status=500
+        )
 
     response.data = {
         "success": False,
