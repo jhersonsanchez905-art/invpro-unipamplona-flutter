@@ -6,7 +6,9 @@ abstract class CategoriaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadCategorias extends CategoriaEvent {}
+class LoadCategorias extends CategoriaEvent {
+  const LoadCategorias();
+}
 
 class CreateCategoria extends CategoriaEvent {
   final Map<String, dynamic> data;

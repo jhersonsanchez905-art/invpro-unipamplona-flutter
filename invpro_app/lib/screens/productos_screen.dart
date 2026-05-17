@@ -81,7 +81,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
         builder: (context, state) {
           if (state is ProductoLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is ProductsLoaded) {
+          } else if (state is ProductosLoaded) {
             if (state.productos.isEmpty) {
               return const Center(child: Text('No hay productos'));
             }

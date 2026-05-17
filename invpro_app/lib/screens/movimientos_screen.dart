@@ -185,7 +185,7 @@ class _RegistroMovimientoSheetState extends State<RegistroMovimientoSheet> {
             ),
             BlocBuilder<ProductoBloc, ProductoState>(
               builder: (context, state) {
-                if (state is ProductsLoaded) {
+                if (state is ProductosLoaded) {
                   return DropdownButtonFormField<String>(
                     value: _productoId,
                     decoration:
