@@ -19,7 +19,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<DashboardBloc>().add(LoadDashboard());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<DashboardBloc>().add(LoadDashboard());
+      }
+    });
   }
 
   @override
