@@ -1,4 +1,5 @@
 from rest_framework import generics, serializers, status
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -144,6 +145,60 @@ class ProductoViewSet(ModelViewSet):
         return Response(
             {"success": True, "data": serializer.data, "message": "Alertas de stock obtenidas."}
         )
+
+
+class DashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from django.utils import timezone
+        from django.db.models import Sum, Count
+        from apps.movements.models import Movimiento
+
+        today = timezone.now().date()
+
+        total_productos = Producto.objects.filter(is_active=True).count()
+        productos_alerta = Producto.objects.filter(
+            is_active=True
+        ).filter(stock_actual__lte=django_models.F('stock_minimo')).count()
+
+        movimientos_hoy = Movimiento.objects.filter(
+            created_at__date=today
+        ).count()
+
+        valor_inventario = Producto.objects.filter(
+            is_active=True
+        ).aggregate(
+            total=Sum(django_models.ExpressionWrapper(
+                django_models.F('stock_actual') * django_models.F('precio_unitario'),
+                output_field=django_models.DecimalField()
+            ))
+        )['total'] or 0
+
+        ultimos_movimientos = Movimiento.objects.select_related(
+            'producto', 'usuario'
+        ).order_by('-created_at')[:5]
+
+        movimientos_data = [{
+            'id': str(m.id),
+            'tipo': m.tipo,
+            'producto_sku': m.producto.sku,
+            'producto_nombre': m.producto.nombre,
+            'cantidad': float(m.cantidad),
+            'usuario': m.usuario.username,
+            'fecha': m.created_at.strftime('%d/%m/%Y %H:%M'),
+        } for m in ultimos_movimientos]
+
+        return Response({
+            'success': True,
+            'data': {
+                'total_productos': total_productos,
+                'productos_alerta': productos_alerta,
+                'movimientos_hoy': movimientos_hoy,
+                'valor_inventario': float(valor_inventario),
+                'ultimos_movimientos': movimientos_data,
+            }
+        })
 
 
 class StockAlertaViewSet(ReadOnlyModelViewSet):
