@@ -5,6 +5,10 @@ import 'package:get_it/get_it.dart';
 import 'core/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_state.dart';
+import 'blocs/dashboard/dashboard_bloc.dart';
+import 'blocs/producto/producto_bloc.dart';
+import 'blocs/categoria/categoria_bloc.dart';
+import 'blocs/movimiento/movimiento_bloc.dart';
 import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -122,6 +126,18 @@ class InvProApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>.value(value: authBloc),
+        BlocProvider<DashboardBloc>(
+          create: (_) => GetIt.I<DashboardBloc>(),
+        ),
+        BlocProvider<ProductoBloc>(
+          create: (_) => GetIt.I<ProductoBloc>(),
+        ),
+        BlocProvider<CategoriaBloc>(
+          create: (_) => GetIt.I<CategoriaBloc>(),
+        ),
+        BlocProvider<MovimientoBloc>(
+          create: (_) => GetIt.I<MovimientoBloc>(),
+        ),
       ],
       child: MaterialApp.router(
         title: 'InvPro',
