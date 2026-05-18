@@ -115,9 +115,9 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "user": "100/hour",
-        "anon": "10/hour",
-    },
+    "user": "1000/hour",
+    "anon": "1000/hour",
+},
     "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
