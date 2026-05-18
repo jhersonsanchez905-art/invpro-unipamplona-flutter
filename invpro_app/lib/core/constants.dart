@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+  static const String baseUrl = 'http://192.168.20.5:8000/api/v1';
   static const String accessTokenKey = 'access_token';
   static const String refreshTokenKey = 'refresh_token';
   static const String userIdKey = 'user_id';

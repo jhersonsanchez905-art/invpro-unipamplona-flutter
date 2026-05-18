@@ -44,6 +44,11 @@ class ApiClient {
         return handler.next(error);
       },
     ));
+
+    _dio.interceptors.add(LogInterceptor(
+      requestBody: true,
+      responseBody: true,
+    ));
   }
 
   Future<bool> _refreshToken() async {

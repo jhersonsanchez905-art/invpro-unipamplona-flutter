@@ -39,16 +39,16 @@ void setupDependencies() {
     AuthBloc(repository: getIt<AuthRepository>()),
   );
 
-  getIt.registerFactory<CategoriaBloc>(
+  getIt.registerLazySingleton<CategoriaBloc>(
     () => CategoriaBloc(repository: getIt<CategoriaRepository>()),
   );
-  getIt.registerFactory<ProductoBloc>(
+  getIt.registerLazySingleton<ProductoBloc>(
     () => ProductoBloc(repository: getIt<ProductoRepository>()),
   );
-  getIt.registerFactory<MovimientoBloc>(
+  getIt.registerLazySingleton<MovimientoBloc>(
     () => MovimientoBloc(repository: getIt<MovimientoRepository>()),
   );
-  getIt.registerFactory<DashboardBloc>(
+  getIt.registerLazySingleton<DashboardBloc>(
     () => DashboardBloc(repository: getIt<DashboardRepository>()),
   );
 }
