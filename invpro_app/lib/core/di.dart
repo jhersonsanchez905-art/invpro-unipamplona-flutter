@@ -5,6 +5,8 @@ import '../repositories/categoria_repository.dart';
 import '../repositories/producto_repository.dart';
 import '../repositories/movimiento_repository.dart';
 import '../repositories/dashboard_repository.dart';
+import '../repositories/auditoria_repository.dart';
+import '../repositories/usuarios_repository.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/categoria/categoria_bloc.dart';
 import '../blocs/producto/producto_bloc.dart';
@@ -17,7 +19,7 @@ void setupDependencies() {
   // Core
   getIt.registerSingleton<ApiClient>(ApiClient()..initialize());
 
-  // Repositories — LazySingletons
+  // Repositories
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepository(apiClient: getIt<ApiClient>()),
   );
@@ -33,12 +35,17 @@ void setupDependencies() {
   getIt.registerLazySingleton<DashboardRepository>(
     () => DashboardRepository(apiClient: getIt<ApiClient>()),
   );
+  getIt.registerLazySingleton<AuditoriaRepository>(
+    () => AuditoriaRepository(apiClient: getIt<ApiClient>()),
+  );
+  getIt.registerLazySingleton<UsuariosRepository>(
+    () => UsuariosRepository(apiClient: getIt<ApiClient>()),
+  );
 
-  // BLoCs — AuthBloc as singleton, others as factories
+  // BLoCs
   getIt.registerSingleton<AuthBloc>(
     AuthBloc(repository: getIt<AuthRepository>()),
   );
-
   getIt.registerLazySingleton<CategoriaBloc>(
     () => CategoriaBloc(repository: getIt<CategoriaRepository>()),
   );

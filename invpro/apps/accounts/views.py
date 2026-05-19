@@ -4,15 +4,22 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
+from rest_framework.mixins import ListModelMixin
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from apps.accounts.models import CustomUser
+from apps.accounts.models import AuditLog, CustomUser
+from apps.accounts.permissions import EsAuditor, EsAdmin
 from apps.accounts.serializers import (
+    AuditLogSerializer,
     CheckEmailSerializer,
     LoginSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
     RegisterSerializer,
     UserSerializer,
+    UsuarioListSerializer,
     VerifyEmailSerializer,
     VerifyOTPSerializer,
 )
@@ -267,3 +274,64 @@ class CheckEmailView(APIView):
             {"success": True, "data": {"available": not exists}},
             status=status.HTTP_200_OK,
         )
+
+
+class AuditLogViewSet(ReadOnlyModelViewSet):
+    """
+    GET /api/v1/auditoria/       — lista paginada de logs
+    GET /api/v1/auditoria/{id}/  — detalle de un log
+    Solo admin y auditor pueden acceder.
+    """
+    queryset = AuditLog.objects.select_related("user").order_by("-created_at")
+    serializer_class = AuditLogSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        "action": ["exact"],
+        "entity": ["exact"],
+        "http_status": ["exact"],
+    }
+    search_fields = ["entity", "user__username"]
+    ordering_fields = ["created_at", "action", "entity"]
+    ordering = ["-created_at"]
+
+    def get_permissions(self):
+        return [EsAuditor()]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"success": True, "data": serializer.data})
+
+
+class UsuariosViewSet(GenericViewSet, ListModelMixin):
+    """
+    GET /api/v1/usuarios/  — lista de usuarios del sistema
+    Solo admin y superior pueden listar.
+    """
+    queryset = CustomUser.objects.order_by("-date_joined")
+    serializer_class = UsuarioListSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
+    search_fields = ["username", "email", "first_name", "last_name"]
+    filterset_fields = {
+        "rol": ["exact"],
+        "is_active": ["exact"],
+        "email_verified": ["exact"],
+    }
+    ordering_fields = ["date_joined", "username", "rol"]
+    ordering = ["-date_joined"]
+
+    def get_permissions(self):
+        return [EsAdmin()]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"success": True, "data": serializer.data})

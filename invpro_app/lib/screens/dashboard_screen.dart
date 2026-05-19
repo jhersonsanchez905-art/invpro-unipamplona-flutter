@@ -29,8 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = context.read<AuthBloc>().state;
-    final user =
-        authState is AuthAuthenticated ? authState.user : null;
+    final user = authState is AuthAuthenticated ? authState.user : null;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -98,10 +97,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildKpiRow(Map<String, dynamic> data) {
-    final productos =
-        (data['productos'] as List<dynamic>?) ?? [];
-    final movimientos =
-        (data['movimientos'] as List<dynamic>?) ?? [];
+    final productos = (data['productos'] as List<dynamic>?) ?? [];
+    final movimientos = (data['movimientos'] as List<dynamic>?) ?? [];
 
     final totalProductos = productos.length;
     final productosAlerta = productos.where((p) {
@@ -118,10 +115,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     double valorInventario = 0;
     for (final p in productos) {
       if (p is Map<String, dynamic>) {
-        final stock =
-            (p['stock_actual'] as num?)?.toDouble() ?? 0;
-        final precio =
-            (p['precio_unitario'] as num?)?.toDouble() ?? 0;
+        final stock = (p['stock_actual'] as num?)?.toDouble() ?? 0;
+        final precio = (p['precio_unitario'] as num?)?.toDouble() ?? 0;
         valorInventario += stock * precio;
       }
     }
@@ -133,9 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _buildKpiCard('Total productos', totalProductos.toString()),
         _buildKpiCard('Con alerta', productosAlerta.toString()),
         _buildKpiCard('Mov. hoy', movimientosHoy.toString()),
-        _buildKpiCard(
-            'Valor inventario',
-            '\$' + valorInventario.toStringAsFixed(2)),
+        _buildKpiCard('Valor inventario', '\$' + valorInventario.toStringAsFixed(2)),
       ],
     );
   }
@@ -152,8 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(title, style: const TextStyle(fontSize: 12)),
               const SizedBox(height: 4),
               Text(value,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -162,8 +154,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   List<Widget> _buildMovimientosList(Map<String, dynamic> data) {
-    final movimientos =
-        (data['movimientos'] as List<dynamic>?) ?? [];
+    final movimientos = (data['movimientos'] as List<dynamic>?) ?? [];
     final lastFive = movimientos.take(5).toList();
 
     if (lastFive.isEmpty) {
@@ -183,15 +174,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }).toList();
   }
 
-  Widget _buildDrawerMenu(
-      BuildContext context, dynamic user) {
+  Widget _buildDrawerMenu(BuildContext context, dynamic user) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration:
-                BoxDecoration(color: Theme.of(context).primaryColor),
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -216,13 +205,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: const Text('Historial'),
             onTap: () => context.go('/historial'),
           ),
-          if (user != null && user.esAlmacenista)
+          if (user != null && (user.esAlmacenista || user.esAdmin))
             ListTile(
               leading: const Icon(Icons.inventory),
               title: const Text('Movimientos'),
               onTap: () => context.go('/movimientos'),
             ),
-          if (user != null && user.esAlmacenista)
+          if (user != null && (user.esAlmacenista || user.esAdmin))
             ListTile(
               leading: const Icon(Icons.category),
               title: const Text('Productos'),
@@ -240,13 +229,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               title: const Text('Usuarios'),
               onTap: () => context.go('/usuarios'),
             ),
-          if (user != null && user.esAdmin)
+          if (user != null && (user.esAdmin || user.esAuditor))
             ListTile(
               leading: const Icon(Icons.security),
               title: const Text('Auditoria'),
               onTap: () => context.go('/auditoria'),
             ),
-          if (user != null && user.esAuditor)
+          if (user != null && (user.esAdmin || user.esAuditor))
             ListTile(
               leading: const Icon(Icons.bar_chart),
               title: const Text('Reportes'),

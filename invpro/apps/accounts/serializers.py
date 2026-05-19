@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import EmailValidator
 from rest_framework import serializers
 
-from apps.accounts.models import CustomUser
+from apps.accounts.models import AuditLog, CustomUser
 from apps.accounts.services import validate_password_strength
 
 
@@ -122,3 +122,43 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CheckEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+
+class AuditLogSerializer(serializers.ModelSerializer):
+    usuario = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AuditLog
+        fields = [
+            "id",
+            "usuario",
+            "action",
+            "entity",
+            "entity_id",
+            "ip_address",
+            "http_status",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+    def get_usuario(self, instance):
+        if instance.user:
+            return instance.user.username
+        return "Sistema"
+
+
+class UsuarioListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "rol",
+            "is_active",
+            "email_verified",
+            "date_joined",
+        ]
+        read_only_fields = fields
